@@ -2,18 +2,20 @@ library(httr)
 library(purrr)
 library(future)
 library(dplyr)
+library(stringr)
+library(ggplot2)
 
 ################ helper extraction functions #############################################
 
-IMG_url = function(x){
-  outdata[["results"]][[x]][["image_sets"]][["thumbnail"]]
+IMG_url = function(i, outdata){
+  outdata[["results"]][[i]][["image_sets"]][["thumbnail"]]
 }
 
-IMG_loc = function(x)
+IMG_loc = function(i, outdata)
 {
-  x = outdata[["results"]][[x]][["geometrie"]][["coordinates"]][[1]]
-  y = outdata[["results"]][[x]][["geometrie"]][["coordinates"]][[2]]
-  z = outdata[["results"]][[x]][["geometrie"]][["coordinates"]][[3]]
+  x = outdata[["results"]][[i]][["geometrie"]][["coordinates"]][[1]]
+  y = outdata[["results"]][[i]][["geometrie"]][["coordinates"]][[2]]
+  z = outdata[["results"]][[i]][["geometrie"]][["coordinates"]][[3]]
   tibble::tibble(x,y,z)
 }
 
@@ -38,8 +40,8 @@ singlepage = function(page, pb=NULL)
     outdata = content(out)
     N = length(outdata$results)
 
-    panorame_link = map_chr(1:N, IMG_url)
-    panorame_data = map_df(1:N, IMG_loc)
+    panorame_link = map_chr(1:N, IMG_url, outdata)
+    panorame_data = map_df(1:N, IMG_loc, outdata)
     panorame_data$link = panorame_link
     panorame_data$page = page
     return(panorame_data)
@@ -49,45 +51,66 @@ singlepage = function(page, pb=NULL)
   }
 }
 
+
+tmp = singlepage(1)
+
+plot(tmp$y,tmp$x)
 ##### spread over four cores to speed up scraping ######
 # estimated there are ~2200 pages
+
+
+
 
 
 plan(multicore)
 
 batch1 %<-% {
-   map_df(1:500, singlepage)
+   map_df(1:750, singlepage)
 }
 
 
 batch2 %<-% {
-   map_df(501:1000, singlepage)
+   map_df(751:1500, singlepage)
 }
 
 batch3 %<-% {
-  map_df(1001:1500, singlepage)
+  map_df(1501:2250, singlepage)
 }
 
 batch4 %<-% {
-  map_df(1501:2000, singlepage)
+  map_df(2251:3000, singlepage)
 }
 
-batch5 %<-% {
-  map_df(2001:2200, singlepage)
-}
 
-batch5 = .Last.value
+f <- futureOf(batch4)
 
-f <- futureOf(batch1)
-
-tt = batch5 %>% group_by(page) %>%  summarise(n=n())
+tt = batch4 %>% group_by(page) %>%  summarise(n=n())
 
 
 Amsterdam_Panoramas = bind_rows(
-  batch1, batch2, batch3, batch4, batch5
+  batch1, batch2, batch3, batch4
 )
 
 saveRDS(Amsterdam_Panoramas, "Amsterdam_Panoramas.RDs")
 
 
 Amsterdam_Panoramas[440000,]
+
+## google check
+url_gm = sprintf(
+  "https://www.google.nl/maps/@%s,%s,19z", 
+  Amsterdam_Panoramas[400000,]$y,
+  Amsterdam_Panoramas[400000,]$x
+)
+
+
+ggplot(Amsterdam_Panoramas, aes(x=y, y=x)) + geom_point(alpha = 0.1)    
+
+
+url_gm
+Amsterdam_Panoramas[40000,]$link
+
+
+
+
+https://api.data.amsterdam.nl/panorama/recente_opnames/2016/?page=200&page_size=200
