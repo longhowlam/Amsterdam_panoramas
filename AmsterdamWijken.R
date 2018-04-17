@@ -61,3 +61,29 @@ m2 = m2 %>%
     data = AmsterdamWijken,
     popup = polpopup )  
 m2
+
+
+################ nu ook met animated gifs
+tt = AmsterdamWijken$BU_NAAM
+fn = paste0(str_replace_all(tt,"\\s","_"), ".gif")
+fn = fn %>% str_replace_all("/", "@")
+
+polpopup = paste0(
+  AmsterdamWijken$BU_NAAM, 
+  "<br/>",
+  "<img border='0' src='http://www.lhldsd.nl/amsterdam/",
+  fn,
+  "' width='325' height='200'>"
+)
+
+m = leaflet()
+m = m %>%
+  addTiles() %>%
+  addPolygons(
+    weight=2,
+    smoothFactor = 0.2, fillOpacity = 0.55, 
+    color = ~colorQuantile(n = 9, "YlOrRd", AmsterdamWijken$aantal_pano)(aantal_pano),
+    data = AmsterdamWijken,
+    popup = polpopup )  
+m
+polpopup[1]
