@@ -30,7 +30,10 @@ Amsterdam2 = bind_cols(
 
 Amsterdam_buurt = Amsterdam2 %>% 
   group_by(BU_NAAM) %>% 
-  summarise(aantal_pano = n()) %>% 
+  summarise(
+    aantal_pano = n(),
+    eenplaatje = max(link)
+  ) %>% 
   filter(!is.na(BU_NAAM))
 
 
@@ -42,7 +45,10 @@ AmsterdamWijken@data = pp
 ##### zet op een interactief kaartje ##############
 polpopup = paste(
   AmsterdamWijken$BU_NAAM, 
-  "aantal panos ", as.character(AmsterdamWijken$aantal_pano)
+  "aantal panos ", as.character(AmsterdamWijken$aantal_pano), "<br/>",
+  "<img border='0' src='",
+  AmsterdamWijken$eenplaatje,
+  "' width='325' height='200'>"
 )
 
 m2 = leaflet()
