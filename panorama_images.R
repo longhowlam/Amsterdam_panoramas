@@ -51,9 +51,6 @@ singlepage = function(page, pb=NULL)
   }
 }
 
-
-#tmp = singlepage(1)
-
 #### spread over 4 cores on my machine to retrieve image links
 
 plan(multicore)
@@ -75,7 +72,10 @@ batch4 %<-% {
 }
 
 
-f <- futureOf(batch4)
+#f <- futureOf(batch4)
+
+## Now you have one big data frame with links to all panorama fotos
+## and the corresponding coordinates
 
 Amsterdam_Panoramas = bind_rows(
   batch1, batch2, batch3, batch4
@@ -83,8 +83,15 @@ Amsterdam_Panoramas = bind_rows(
 
 saveRDS(Amsterdam_Panoramas, "Amsterdam_Panoramas.RDs")
 
-Amsterdam_Panoramas %>% sample_n(10000) %>% 
-ggplot( aes(x=y, y=x)) + geom_point(alpha = 0.01)    
+### just create a scatter plot of a sample of the data
+Amsterdam_Panoramas %>% 
+  sample_n(10000) %>% 
+  ggplot( aes(x=y, y=x)) +
+  geom_point(alpha = 0.01)    
+
+
+
+
 
 #### google check ####
 i = 98
