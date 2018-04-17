@@ -54,7 +54,7 @@ singlepage = function(page, pb=NULL)
 
 #tmp = singlepage(1)
 
-#### sprad over 4 cores on my machine to retrieve image links
+#### spread over 4 cores on my machine to retrieve image links
 
 plan(multicore)
 
