@@ -52,22 +52,15 @@ singlepage = function(page, pb=NULL)
 }
 
 
-tmp = singlepage(1)
+#tmp = singlepage(1)
 
-plot(tmp$y,tmp$x)
-##### spread over four cores to speed up scraping ######
-# estimated there are ~2200 pages
-
-
-
-
+#### sprad over 4 cores on my machine to retrieve image links
 
 plan(multicore)
 
 batch1 %<-% {
    map_df(1:750, singlepage)
 }
-
 
 batch2 %<-% {
    map_df(751:1500, singlepage)
@@ -84,33 +77,21 @@ batch4 %<-% {
 
 f <- futureOf(batch4)
 
-tt = batch4 %>% group_by(page) %>%  summarise(n=n())
-
-
 Amsterdam_Panoramas = bind_rows(
   batch1, batch2, batch3, batch4
 )
 
 saveRDS(Amsterdam_Panoramas, "Amsterdam_Panoramas.RDs")
 
+Amsterdam_Panoramas %>% sample_n(10000) %>% 
+ggplot( aes(x=y, y=x)) + geom_point(alpha = 0.01)    
 
-Amsterdam_Panoramas[440000,]
-
-## google check
+#### google check ####
+i = 98
 url_gm = sprintf(
   "https://www.google.nl/maps/@%s,%s,19z", 
-  Amsterdam_Panoramas[400000,]$y,
-  Amsterdam_Panoramas[400000,]$x
+  Amsterdam_Panoramas[i,]$y,
+  Amsterdam_Panoramas[i,]$x
 )
-
-
-ggplot(Amsterdam_Panoramas, aes(x=y, y=x)) + geom_point(alpha = 0.1)    
-
-
 url_gm
-Amsterdam_Panoramas[40000,]$link
-
-
-
-
-https://api.data.amsterdam.nl/panorama/recente_opnames/2016/?page=200&page_size=200
+Amsterdam_Panoramas[i,]$link
