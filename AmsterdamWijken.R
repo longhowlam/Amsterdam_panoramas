@@ -86,4 +86,4 @@ m = m %>%
     data = AmsterdamWijken,
     popup = polpopup )  
 m
-polpopup[1]
+

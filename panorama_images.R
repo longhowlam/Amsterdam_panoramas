@@ -5,6 +5,10 @@ library(dplyr)
 library(stringr)
 library(ggplot2)
 
+
+# some r code to scrape / extract the links of the Amsterdam panorma images
+# so these are not the images themselves, just the link and the long/lat location of the images
+
 ################ helper extraction functions #############################################
 
 IMG_url = function(i, outdata){
@@ -84,12 +88,16 @@ Amsterdam_Panoramas = bind_rows(
 saveRDS(Amsterdam_Panoramas, "Amsterdam_Panoramas.RDs")
 
 ### just create a scatter plot of a sample of the data
+library(leaflet)
+
 Amsterdam_Panoramas %>% 
-  sample_n(10000) %>% 
-  ggplot( aes(x=y, y=x)) +
-  geom_point(alpha = 0.01)    
-
-
+  sample_n(5000) %>% 
+  leaflet() %>% 
+  addTiles() %>% 
+  addCircleMarkers(
+    lng=~x, lat = ~y, radius = 0.5,
+    opacity = 1
+    )
 
 
 

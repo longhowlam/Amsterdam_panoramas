@@ -1,3 +1,6 @@
+# download all the images, just by looping through the more than 540K links
+# we can divide the load on multiple cores by using the future packahe
+
 N = dim(Amsterdam_Panoramas)[1]
 Amsterdam_Panoramas$id = paste0("image",1:N,".jpg")
 
@@ -85,4 +88,4 @@ a6 %<-% {
 }
 
 
-futureOf(a4)
+futureOf(a6)

@@ -2,8 +2,8 @@ library(magick)
 library(purrr)
 library(stringr)
 
-## sample per buurt in Amsterdam 25 panorama images en zet die in een 
-## animated gif die we kunnen gebruiken op een leaflet
+## sample per buurt in Amsterdam 25 panorama images, download ze en grbuik magick om
+## deze in een animated gif te zettenn. Deze kunnen we dangebruiken op een leaflet
 
 createbuurtanimatie = function(bunaam)
 {
