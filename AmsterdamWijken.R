@@ -1,6 +1,7 @@
 library(sp)
 library(dplyr)
 library(leaflet)
+library(stringr)
 
 # De Amsterdam_panoramaset is een data set met punten
 # we kunnen aggregeren op wijk nivo. We hebben buurt shape files van CBS
@@ -63,7 +64,9 @@ m2 = m2 %>%
 m2
 
 
-################ nu ook met animated gifs
+
+################ nu ook met animated gifs die in het script maakanimatie.R gemaakt zijn 
+
 tt = AmsterdamWijken$BU_NAAM
 fn = paste0(str_replace_all(tt,"\\s","_"), ".gif")
 fn = fn %>% str_replace_all("/", "@")
