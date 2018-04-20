@@ -1,6 +1,7 @@
 library(magick)
 library(purrr)
 library(stringr)
+library(dplyr)
 library(keras)
 library(reticulate)
 
@@ -37,16 +38,16 @@ get_clarifai_classes = function(link)
 }
 
 
-#### clarifai setup ########################################################
+#### clarifai setup ############################################################
 
 cf = import("clarifai")
 cf_app = cf$rest$ClarifaiApp()
 cf_model = cf_app$models$get("general-v1.3")
 
 
-classify_buurtpanoramas = function(bunaam, N_panos = 400)
+classify_buurtpanoramas = function(bunaam, N_panos = 300, pb=NULL)
 {
-  
+  if (!is.null(pb)) pb$tick()$print()
   links  = Amsterdam2 %>% 
     filter(BU_NAAM == bunaam ) %>% 
     sample_n(N_panos) %>% 
@@ -60,6 +61,21 @@ classify_buurtpanoramas = function(bunaam, N_panos = 400)
 
 
 
-######### loop nu over de buurten die we hebben
+######### loop nu over de buurten die we hebben ################################
 tmp = table(Amsterdam2$BU_NAAM)
 buurten = names(tmp[tmp >0])
+
+#Amsterdam_Clarifai_classes = tibble::tibble()
+
+for(b in buurten[80:96])
+{
+  out = classify_buurtpanoramas(b)
+  Amsterdam_Clarifai_classes = bind_rows(Amsterdam_Clarifai_classes,out)
+  saveRDS(Amsterdam_Clarifai_classes, "Amsterdam_Clarifai_classes.RDs")
+  print(b)
+}
+
+
+
+clf_classes = Amsterdam_Clarifai_classes %>% group_by(entities) %>% summarise(n=n())
+clf_buurt_classes = Amsterdam_Clarifai_classes %>% group_by(BU_NAAM) %>% summarise(n=n())
