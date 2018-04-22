@@ -3,9 +3,18 @@ library(dplyr)
 library(stringr)
 library(leaflet)
 
+
 clf_classes = Amsterdam_Clarifai_classes %>%
   group_by(entities) %>% 
   summarise(n=log10(n()))
+
+
+clf_classes2 = Amsterdam_Clarifai_classes %>%
+  group_by(entities) %>% 
+  summarise(n=n()) %>% 
+  arrange(desc(n)) %>% 
+  slice(1:40) %>% 
+  arrange(entities)
 
 wordcloud2(clf_classes, shape = "star")
 wordcloud2(clf_classes, size = 1,shape = 'pentagon')

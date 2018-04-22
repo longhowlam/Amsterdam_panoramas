@@ -79,3 +79,9 @@ for(b in buurten[80:96])
 
 clf_classes = Amsterdam_Clarifai_classes %>% group_by(entities) %>% summarise(n=n())
 clf_buurt_classes = Amsterdam_Clarifai_classes %>% group_by(BU_NAAM) %>% summarise(n=n())
+
+
+Amsterdam_Clarifai_classes2 = Amsterdam_Clarifai_classes %>% 
+  left_join(Amsterdam_Panoramas)
+
+
