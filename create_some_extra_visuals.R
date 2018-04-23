@@ -13,11 +13,11 @@ clf_classes2 = Amsterdam_Clarifai_classes %>%
   group_by(entities) %>% 
   summarise(n=n()) %>% 
   arrange(desc(n)) %>% 
-  slice(1:40) %>% 
+  slice(1:50) %>% 
   arrange(entities)
 
 wordcloud2(clf_classes, shape = "star")
-wordcloud2(clf_classes, size = 1,shape = 'pentagon')
+wordcloud2(clf_classes, size = .51,shape = 'pentagon')
 
 
 
